@@ -63,7 +63,7 @@ def sort_folder(folder):
             else:
                 unknown_types.add(object.split(
                     '.')[-1].upper().removeprefix("."))
-        elif os.path.isdir(object_folder):
+        elif os.path.isdir(object_folder) and object not in ("archives", "video", "audio", "documents", "images"):
             sort_folder(object_folder)
             if not os.listdir(object_folder):
                 os.rmdir(object_folder)
