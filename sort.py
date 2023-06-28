@@ -91,7 +91,8 @@ def scan_folder(folder):
             scan_folder(object)
 """
 
-sort_folder(Path(sys.argv[1]))
+if __name__ == '__main__':
+    sort_folder(Path(sys.argv[1]))
 
 print(f"Images: {list_images}")
 print(f"Videos: {list_videos}")
