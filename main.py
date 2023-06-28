@@ -1,8 +1,8 @@
 from pathlib import Path
+import shutil
+import sys
 import os
 import re
-import sys
-import shutil
 
 
 def category(extension):
