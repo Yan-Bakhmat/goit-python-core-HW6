@@ -9,7 +9,6 @@ import os
 def run():
     def main():
         a = sys.argv[1]
-
         return a
     num = main()
 
@@ -39,20 +38,15 @@ def run():
 
     def translate(name):
         translated_name = ''
-
         for k in name:
             perevod = str.translate(k, TRANS)
             translated_name = translated_name + str(perevod)
-
         return translated_name
-
     spisok_rashirenii = set()
 
     def normalize(string):
         rez = translate(string)
-
         pattern_zamena = re.sub("[^A-Za-z0-9]", "_", rez)
-
         return pattern_zamena
 
     extensions = {
@@ -83,50 +77,38 @@ def run():
     path = Path(main())
 
     if path.exists():
-
         if path.is_dir():
-
             items = path.glob('**/*')
             for item in items:
-
                 if item.is_file():
-
                     item_file = item.name.split('.')
                     razshir_faila = item_file[1].upper()
                     nazva_faila = item_file[0]
                     nazva_faila = normalize(nazva_faila)
-
                     if razshir_faila in extensions.keys():
                         spisok_rashirenii.add(razshir_faila)
-
                     else:
                         spisok_rashir.add(razshir_faila)
-
                     for i in extensions.keys():
-
                         i = i.upper()
                         if i == razshir_faila:
-
                             if razshir_faila == 'ZIP':
-
                                 way = os.path.join(path, 'archives')
-
+                                print(way)
                                 way = os.path.join(way, nazva_faila)
+                                print(way)
                                 ar_path = os.path.join(path, way)
-
+                                print(ar_path)
+                                print(item)
                                 shutil.unpack_archive(item, ar_path)
                             elif razshir_faila == "TAR":
-
                                 way = os.path.join(path, 'archives')
                                 way = os.path.join(way, nazva_faila)
                                 ar_path = os.path.join(path, way)
-
                             elif razshir_faila == "GZ":
-
                                 way = os.path.join(path, 'archives')
                                 way = os.path.join(way, nazva_faila)
                                 ar_path = os.path.join(path, way)
-
                             else:
                                 ext_v = extensions.get(i)
                                 old_way = os.path.abspath(item)
@@ -134,28 +116,23 @@ def run():
                                 new_path = os.path.join(
                                     new_pat, (nazva_faila + '.' + razshir_faila))
                                 os.replace(old_way, new_path)
-
                         else:
                             pass
-
                 else:
                     if item.name in extensions.values():
                         pass
 
     spisok_papok_iskluchenii = ['video', 'audio',
                                 'documents', 'images', 'archives']
+    
     pattern_parsinga = path.iterdir()
     for i in pattern_parsinga:
-
         if i.is_dir():
-
             if i.name in spisok_papok_iskluchenii:
                 pass
                 #print(f'Папку "{i.name}" не видаляти')
-
             else:
                 #print(f'Папку "{i.name}" видалити')
-
                 try:
                     os.rmdir(i)
                 except:
