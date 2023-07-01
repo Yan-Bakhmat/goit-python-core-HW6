@@ -150,6 +150,7 @@ def run():
         if i.is_dir():
 
             if i.name in spisok_papok_iskluchenii:
+                pass
                 #print(f'Папку "{i.name}" не видаляти')
 
             else:
@@ -160,8 +161,10 @@ def run():
                 except:
                     OSError
                 else:
+                    pass
                     #print(f'Папку "{i}" видалено')
                 finally:
+                    pass
                     #print('DONE')
 
     print(f'Невідомі розширення файлів: {spisok_rashir}')
