@@ -1,52 +1,172 @@
-from pathlib import Path
-import shutil
 import sys
-import os
+from pathlib import Path
+from os import *
 import re
+import shutil
+import os
 
 
-def category(extension):
-    if extension in ['JPEG', 'PNG', 'JPG', 'SVG']:
-        return 'images'
-    elif extension in ['AVI', 'MP4', 'MOV', 'MKV']:
-        return 'video'
-    elif extension in ['DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX']:
-        return 'documents'
-    elif extension in ['MP3', 'OGG', 'WAV', 'AMR']:
-        return 'audio'
-    elif extension in ['ZIP', 'GZ', 'TAR']:
-        return 'archives'
-    else:
-        return 'Unknown extensions'
+def run():
+    def main():
+        a = sys.argv[1]
 
+        return a
+    num = main()
 
-def normalize(name):
-    translate_to_latin = {ord('а'): 'a', ord('б'): 'b', ord('в'): 'v', ord('г'): 'h', ord('ґ'): 'g', ord('д'): 'd', ord('е'): 'e', ord('є'): 'ye', ord('ж'): 'zh', ord('з'): 'z', ord('и'): 'y', ord('і'): 'i', ord('ї'): 'yi', ord('й'): 'y', ord('к'): 'k', ord('л'): 'l', ord('м'): 'm', ord('н'): 'n', ord('о'): 'o', ord('п'): 'p', ord('р'): 'r', ord('с'): 's', ord('т'): 't', ord('у'): 'u', ord('ф'): 'f', ord('х'): 'kh', ord('ц'): 'ts', ord('ч'): 'ch', ord('ш'): 'sh', ord('щ'): 'shch', ord('ю'): 'yu', ord('я'): 'ya',
-                          ord('А'): 'A', ord('Б'): 'B', ord('В'): 'V', ord('Г'): 'H', ord('Ґ'): 'G', ord('Д'): 'D', ord('Е'): 'E', ord('Є'): 'YE', ord('Ж'): 'ZH', ord('З'): 'Z', ord('И'): 'Y', ord('І'): 'I', ord('Ї'): 'YI', ord('Й'): 'Y', ord('К'): 'K', ord('Л'): 'L', ord('М'): 'M', ord('Н'): 'N', ord('О'): 'O', ord('П'): 'P', ord('Р'): 'R', ord('С'): 'S', ord('Т'): 'T', ord('У'): 'U', ord('Ф'): 'F', ord('Х'): 'KH', ord('Ц'): 'TS', ord('Ч'): 'CH', ord('Ш'): 'SH', ord('Щ'): 'SHCH', ord('Ю'): 'YU', ord('Я'): 'YA'}
-    name.translate(translate_to_latin)
-    re.sub(r"\W", "_", name)
+    try:
+        path_video = os.path.join(num, 'video')
+        os.mkdir(os.path.join(num, 'video'))
+        path_audio = os.path.join(num, 'audio')
+        os.mkdir(os.path.join(num, 'audio'))
+        path_archives = os.path.join(num, 'archives')
+        os.mkdir(os.path.join(num, 'archives'))
+        path_images = os.path.join(num, 'images')
+        os.mkdir(os.path.join(num, 'images'))
+        path_documents = os.path.join(num, 'documents')
+        os.mkdir(os.path.join(num, 'documents'))
+    except:
+        FileExistsError
 
+    CYRILLIC_SYMBOLS = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяєіїґ"
+    TRANSLATION = ("a", "b", "v", "g", "d", "e", "e", "j", "z", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u",
+                   "f", "h", "ts", "ch", "sh", "sch", "", "y", "", "e", "yu", "ya", "je", "i", "ji", "g")
 
-def sort_files(path):
-    for item in os.listdir(path):
-        item_path = os.path.join(path, item)
-        if os.path.isdir(item_path):
-            sort_files(item_path)
-            if not os.listdir(item_path):
-                os.rmdir(item_path)
-        elif os.path.isfile(item_path):
-            extension = item.split('.')[-1].upper()
-            if extension in ['JPEG', 'PNG', 'JPG', 'SVG', 'AVI', 'MP4', 'MOV', 'MKV', 'DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX', 'MP3', 'OGG', 'WAV', 'AMR']:
-                category_folder = category(extension)
-                category_path = os.path.join(path, category_folder)
-                if not os.path.exists(category_path):
-                    os.mkdir(category_path)
-                src_path = os.path.join(path, item)
-                dst_path = os.path.join(category_path, item)
-                shutil.move(src_path, dst_path)
+    TRANS = {}
+
+    for i, j in zip(CYRILLIC_SYMBOLS, TRANSLATION):
+        TRANS[ord(i)] = j
+        TRANS[ord(i.upper())] = j.upper()
+
+    def translate(name):
+        translated_name = ''
+
+        for k in name:
+            perevod = str.translate(k, TRANS)
+            translated_name = translated_name + str(perevod)
+
+        return translated_name
+
+    spisok_rashirenii = set()
+
+    def normalize(string):
+        rez = translate(string)
+
+        pattern_zamena = re.sub("[^A-Za-z0-9]", "_", rez)
+
+        return pattern_zamena
+
+    extensions = {
+        "JPEG": "images",
+        "PNG": "images",
+        "JPG": "images",
+        "SVG": "images",
+        "DOC": "documents",
+        "DOCX": "documents",
+        "TXT": "documents",
+        "PDF": "documents",
+        "XLSX": "documents",
+        "PPTX": "documents",
+        "MP3": "audio",
+        "OGG": "audio",
+        "WAV": "audio",
+        "AMR": "audio",
+        "AVI": "video",
+        "MP4": "video",
+        "MOV": "video",
+        "MKV": "video",
+        "ZIP": "",
+        "GZ": "",
+        "TAR": ""
+    }
+    spisok_rashir = set()
+
+    path = Path(main())
+
+    if path.exists():
+
+        if path.is_dir():
+
+            items = path.glob('**/*')
+            for item in items:
+
+                if item.is_file():
+
+                    item_file = item.name.split('.')
+                    razshir_faila = item_file[1].upper()
+                    nazva_faila = item_file[0]
+                    nazva_faila = normalize(nazva_faila)
+
+                    if razshir_faila in extensions.keys():
+                        spisok_rashirenii.add(razshir_faila)
+
+                    else:
+                        spisok_rashir.add(razshir_faila)
+
+                    for i in extensions.keys():
+
+                        i = i.upper()
+                        if i == razshir_faila:
+
+                            if razshir_faila == 'ZIP':
+
+                                way = os.path.join(path, 'archives')
+
+                                way = os.path.join(way, nazva_faila)
+                                ar_path = os.path.join(path, way)
+
+                                shutil.unpack_archive(item, ar_path)
+                            elif razshir_faila == "TAR":
+
+                                way = os.path.join(path, 'archives')
+                                way = os.path.join(way, nazva_faila)
+                                ar_path = os.path.join(path, way)
+
+                            elif razshir_faila == "GZ":
+
+                                way = os.path.join(path, 'archives')
+                                way = os.path.join(way, nazva_faila)
+                                ar_path = os.path.join(path, way)
+
+                            else:
+                                ext_v = extensions.get(i)
+                                old_way = os.path.abspath(item)
+                                new_pat = os.path.join(path, ext_v)
+                                new_path = os.path.join(
+                                    new_pat, (nazva_faila + '.' + razshir_faila))
+                                os.replace(old_way, new_path)
+
+                        else:
+                            pass
+
+                else:
+                    if item.name in extensions.values():
+                        pass
+
+    spisok_papok_iskluchenii = ['video', 'audio',
+                                'documents', 'images', 'archives']
+    pattern_parsinga = path.iterdir()
+    for i in pattern_parsinga:
+
+        if i.is_dir():
+
+            if i.name in spisok_papok_iskluchenii:
+                #print(f'Папку "{i.name}" не видаляти')
+
             else:
-                pass
+                #print(f'Папку "{i.name}" видалити')
+
+                try:
+                    os.rmdir(i)
+                except:
+                    OSError
+                else:
+                    #print(f'Папку "{i}" видалено')
+                finally:
+                    #print('DONE')
+
+    print(f'Невідомі розширення файлів: {spisok_rashir}')
+    print(f'Відомі розширення: {spisok_rashirenii}')
 
 
-if __name__ == '__main__':
-    sort_files(Path(sys.argv[1]))
+if __name__ == "__main__":
+    run()
